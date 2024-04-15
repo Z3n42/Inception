@@ -1,0 +1,13 @@
+-- Create the database
+CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
+
+-- Create the Wordpress user and grant privileges on the database
+CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
+FLUSH PRIVILEGES;
+
+-- Create the admin user with all privileges
+CREATE USER IF NOT EXISTS '${MYSQL_ROOT_USER}'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_ROOT_USER}'@'%';
+FLUSH PRIVILEGES;
+

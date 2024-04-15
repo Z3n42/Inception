@@ -1,0 +1,30 @@
+[www]
+; Specifies the system user under which the PHP-FPM processes will run.
+user = www-data
+
+; Specifies the system group under which the PHP-FPM processes will run.
+group = www-data
+
+; Specifies the owner of the UNIX socket used by PHP-FPM to communicate with the web server.
+listen.owner = www-data
+
+; Specifies the group of the UNIX socket used by PHP-FPM to communicate with the web server.
+listen.group = www-data
+
+; Specifies the address and port where PHP-FPM will listen for FastCGI requests.
+listen = 0.0.0.0:9000
+
+; Defines how the process manager will control the number of child processes.
+pm = dynamic
+
+; Specifies the minimum number of idle server processes.
+pm.min_spare_servers = 1
+
+; Specifies the maximum number of idle server processes.
+pm.max_spare_servers = 3
+
+; Specifies the number of child processes to be created on startup.
+pm.start_servers = 2
+
+; Specifies the maximum number of child processes that can be created.
+pm.max_children = 5

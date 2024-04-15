@@ -1,0 +1,79 @@
+
+version: '3'
+services:
+  mariadb:
+    build:
+      context: .
+      dockerfile: requirements/mariadb/Dockerfile
+    image: mariadb
+    container_name: mariadb
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/mysql
+    expose:
+      - "3306"
+    restart: unless-stopped
+    networks:
+      - docker_network
+    healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h" ,"localhost"]
+        interval: 5s
+        retries: 5
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: requirements/wordpress/Dockerfile
+    container_name: wordpress
+    image: wordpress
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    env_file: .env
+    volumes:
+      - wp_data:/var/www/inception/wordpress
+    expose:
+      - "9000"
+    restart: unless-stopped
+    networks:
+      - docker_network
+    healthcheck:
+        test: ["CMD", "pidof", "php-fpm7.4", ">/dev/null"]
+        interval: 5s
+        retries: 30
+
+  nginx:
+    build:
+      context: .
+      dockerfile: requirements/nginx/Dockerfile
+    container_name: nginx
+    image: nginx
+    depends_on:
+      wordpress:
+        condition: service_healthy
+    env_file: .env
+    volumes:
+      - wp_data:/var/www/inception/wordpress
+    ports:
+      - "443:443"
+    restart: unless-stopped
+    networks:
+      - docker_network
+
+networks:
+  docker_network:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${HOME}/data/db_data
+      o: bind
+  wp_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${HOME}/data/wp_data
+      o: bind
